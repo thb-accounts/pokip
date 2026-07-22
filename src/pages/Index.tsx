@@ -242,11 +242,10 @@ export default function Index() {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-neon-cyan to-neon-purple bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold bg-gradient-brand bg-clip-text text-transparent">
               POKIP Marketplace
             </h1>
-            <p className="text-muted-foreground mt-2">A POKIP brand.</p>
-            <p className="text-muted-foreground mt-2"></p>
+            <p className="text-muted-foreground mt-2">Your POKIP membership dashboard.</p>
           </div>
           
           <div className="flex items-center gap-4">
