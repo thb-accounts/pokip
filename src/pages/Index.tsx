@@ -45,7 +45,7 @@ export default function Index() {
       <div className="min-h-screen bg-gradient-dark flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-neon-cyan mx-auto"></div>
-          <p className="text-muted-foreground">Loading your dashboard... Enjoy POKIP Marketplace tho</p>
+          <p className="text-muted-foreground">Loading POKIP...</p>
         </div>
       </div>
     );
@@ -63,11 +63,11 @@ export default function Index() {
   const items: Item[] = [
     {
       id: 'blank-item-18',
-      name: 'Like Stanley Bottle',
-      description: 'Contact Hammad to purchase. Hammad Abdullah is handling this listing.',
+      name: 'POKIP Slot',
+      description: 'This slot can be yours',
       cost: 2,
-      image: jassimsImg,
-      category: 'JASSIM ZEESHAN BUTT'
+      image: advertisingImg,
+      category: 'Advertisement'
     },
     {
       id: 'blank-item-17',

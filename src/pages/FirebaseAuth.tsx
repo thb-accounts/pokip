@@ -101,7 +101,7 @@ const FirebaseAuth = () => {
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-center text-2xl">Welcome to POKIP Marketplace! Log-in bro.</CardTitle>
+          <CardTitle className="text-center text-2xl">Sign-in or Sign-up to continue.</CardTitle>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="signin" className="w-full">
