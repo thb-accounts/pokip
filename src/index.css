@@ -2,130 +2,126 @@
 @tailwind components;
 @tailwind utilities;
 
-/* TokenTrek Gaming Design System - All colors MUST be HSL */
+/* POKIP Design System — Blue / Silver / White. All colors MUST be HSL. */
 
 @layer base {
   :root {
-    /* Gaming Dark Theme */
-    --background: 222 47% 4%;
-    --foreground: 180 100% 90%;
+    /* Surfaces */
+    --background: 210 40% 99%;
+    --foreground: 222 47% 11%;
 
-    /* Gaming Cards */
-    --card: 222 47% 6%;
-    --card-foreground: 180 100% 90%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
 
-    --popover: 222 47% 6%;
-    --popover-foreground: 180 100% 90%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
 
-    /* Electric Blue Primary */
-    --primary: 194 100% 50%;
-    --primary-foreground: 222 47% 4%;
+    /* POKIP Blue Primary */
+    --primary: 222 100% 50%;              /* #0057FF */
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 222 100% 44%;
 
-    /* Cyan Secondary */
-    --secondary: 180 100% 25%;
-    --secondary-foreground: 180 100% 90%;
+    /* POKIP Silver Secondary */
+    --secondary: 220 14% 93%;
+    --secondary-foreground: 222 47% 11%;
 
-    /* Muted Gaming */
-    --muted: 222 47% 8%;
-    --muted-foreground: 180 20% 70%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
 
-    /* Electric Accent */
-    --accent: 285 100% 60%;
-    --accent-foreground: 222 47% 4%;
+    --accent: 222 100% 96%;
+    --accent-foreground: 222 100% 40%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --success: 152 76% 38%;
+    --success-foreground: 0 0% 100%;
 
-    --border: 222 47% 12%;
-    --input: 222 47% 8%;
-    --ring: 194 100% 50%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
 
-    /* Gaming Design Tokens */
-    --radius: 0.75rem;
-    
-    /* Custom Gaming Colors */
-    --neon-cyan: 180 100% 50%;
-    --neon-purple: 285 100% 60%;
-    --electric-blue: 194 100% 50%;
-    --dark-surface: 222 47% 6%;
-    --darker-surface: 222 47% 4%;
-    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 222 100% 50%;
+
+    --radius: 0.9rem;
+
+    /* POKIP Brand Tokens */
+    --pokip-blue: 222 100% 50%;
+    --pokip-blue-deep: 224 90% 38%;
+    --pokip-blue-soft: 222 100% 96%;
+    --pokip-silver: 220 10% 78%;
+    --pokip-silver-light: 220 14% 93%;
+    --pokip-white: 0 0% 100%;
+    --pokip-ink: 222 47% 11%;
+
     /* Gradients */
-    --gradient-gaming: linear-gradient(135deg, hsl(194 100% 50% / 0.2), hsl(285 100% 60% / 0.2));
-    --gradient-card: linear-gradient(145deg, hsl(222 47% 6%), hsl(222 47% 8%));
-    --gradient-button: linear-gradient(135deg, hsl(194 100% 50%), hsl(180 100% 40%));
-    
+    --gradient-brand: linear-gradient(135deg, hsl(222 100% 55%), hsl(224 90% 42%));
+    --gradient-silver: linear-gradient(145deg, hsl(220 14% 96%), hsl(220 10% 84%));
+    --gradient-hero: radial-gradient(1200px 600px at 10% -10%, hsl(222 100% 96%) 0%, transparent 60%),
+                     radial-gradient(900px 500px at 100% 0%, hsl(220 14% 96%) 0%, transparent 60%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(220 14% 98%));
+
     /* Shadows */
-    --shadow-neon: 0 0 20px hsl(194 100% 50% / 0.3);
-    --shadow-glow: 0 4px 20px hsl(194 100% 50% / 0.1);
-    --shadow-card: 0 8px 25px hsl(222 47% 2% / 0.4);
-    
-    /* Animations */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --shadow-brand: 0 10px 30px -10px hsl(222 100% 50% / 0.35);
+    --shadow-card: 0 1px 2px hsl(222 47% 11% / 0.04), 0 8px 24px -12px hsl(222 47% 11% / 0.08);
+    --shadow-glow: 0 0 0 6px hsl(222 100% 50% / 0.12);
+
+    /* Motion */
+    --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 222 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 222 100% 96%;
+    --sidebar-accent-foreground: 222 100% 40%;
     --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 222 100% 50%;
 
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Legacy aliases — map old gaming tokens to POKIP brand so unmigrated
+       components keep rendering while Phase 2+ refactors them. */
+    --neon-cyan: var(--pokip-blue);
+    --neon-purple: var(--pokip-blue-deep);
+    --electric-blue: var(--pokip-blue);
+    --dark-surface: var(--card);
+    --darker-surface: var(--background);
+    --gradient-gaming: var(--gradient-brand);
+    --gradient-button: var(--gradient-brand);
+    --gradient-dark: var(--gradient-hero);
+    --shadow-neon: var(--shadow-brand);
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 222 47% 6%;
     --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
+    --card: 222 47% 8%;
     --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
+    --popover: 222 47% 8%;
     --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
+    --primary: 222 100% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 222 30% 16%;
     --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
+    --muted: 222 30% 14%;
+    --muted-foreground: 220 9% 66%;
+    --accent: 222 60% 18%;
     --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 62% 45%;
     --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 222 30% 18%;
+    --input: 222 30% 18%;
+    --ring: 222 100% 60%;
   }
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-
+  * { @apply border-border; }
+  html { scroll-behavior: smooth; }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
+  h1, h2, h3, h4 { @apply tracking-tight; }
 }

@@ -8,6 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { toast } from 'sonner';
+import { PokipLogo } from '@/components/brand/PokipLogo';
+import { Link } from 'react-router-dom';
 import type { ConfirmationResult } from 'firebase/auth';
 
 const FirebaseAuth = () => {
@@ -24,7 +26,7 @@ const FirebaseAuth = () => {
   // Redirect to dashboard if user is already authenticated
   useEffect(() => {
     if (user) {
-      navigate('/');
+      navigate('/dashboard');
     }
   }, [user, navigate]);
 
@@ -98,10 +100,17 @@ const FirebaseAuth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen bg-gradient-hero flex flex-col items-center justify-center p-4">
+      <Link to="/" className="mb-6 flex items-center gap-2" aria-label="POKIP home">
+        <PokipLogo variant="mark" className="h-10 w-10 rounded-xl" />
+        <PokipLogo className="h-7 w-auto" />
+      </Link>
+      <Card className="w-full max-w-md shadow-card">
         <CardHeader>
-          <CardTitle className="text-center text-2xl">Sign-in or Sign-up to continue.</CardTitle>
+          <CardTitle className="text-center text-2xl">Welcome to POKIP</CardTitle>
+          <p className="text-center text-sm text-muted-foreground">
+            Sign in or create your POKIP account to continue.
+          </p>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="signin" className="w-full">
