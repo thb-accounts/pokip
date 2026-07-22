@@ -45,7 +45,7 @@ export default function Index() {
       <div className="min-h-screen bg-gradient-dark flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-neon-cyan mx-auto"></div>
-          <p className="text-muted-foreground">Loading your dashboard... Enjoy TokenTrek Marketplace tho</p>
+          <p className="text-muted-foreground">Loading your dashboard... Enjoy POKIP Marketplace tho</p>
         </div>
       </div>
     );
@@ -72,46 +72,46 @@ export default function Index() {
     {
       id: 'blank-item-17',
       name: 'App or Website Development',
-      description: 'Just buy this slot on TokenTrek, Hammad will contact you.',
+      description: 'Just buy this slot on POKIP, Hammad will contact you.',
       cost: 100,
       image: advertisingImg,
       category: 'Classroom Essentials'
     },
     {
       id: 'blank-item-16',
-      name: 'Just buy this slot on TokenTrek, Hammad will contact you.',
-      description: 'Just buy this slot on TokenTrek, Hammad will contact you.',
+      name: 'Just buy this slot on POKIP, Hammad will contact you.',
+      description: 'Just buy this slot on POKIP, Hammad will contact you.',
       cost: 0,
       image: advertisingImg,
       category: 'Classroom Essentials'
     },
     {
       id: 'blank-item-15',
-      name: 'Just buy this slot on TokenTrek, Hammad will contact you.',
-      description: 'Just buy this slot on TokenTrek, Hammad will contact you.',
+      name: 'Just buy this slot on POKIP, Hammad will contact you.',
+      description: 'Just buy this slot on POKIP, Hammad will contact you.',
       cost: 100,
       image: advertisingImg,
       category: ' Gaming Console'
     },
     {
       id: 'blank-item-14',
-      name: 'Just buy this slot on TokenTrek, Hammad will contact you.',
-      description: 'Just buy this slot on TokenTrek, Hammad will contact you.',
+      name: 'Just buy this slot on POKIP, Hammad will contact you.',
+      description: 'Just buy this slot on POKIP, Hammad will contact you.',
       cost: 0,
       image: advertisingImg,
       category: 'In-Game Currency'
     },
     {
       id: 'blank-item-13',
-      name: 'Just buy this slot on TokenTrek, Hammad will contact you.',
-      description: 'Just buy this slot on TokenTrek, Hammad will contact you.',
+      name: 'Just buy this slot on POKIP, Hammad will contact you.',
+      description: 'Just buy this slot on POKIP, Hammad will contact you.',
       cost: 0,
       image: advertisingImg,
       category: 'Food'
     },
     {
       id: 'blank-item-1',
-      name: 'Free TokenTrek Marketplace Advertisement Slot',
+      name: 'Free POKIP Marketplace Advertisement Slot',
       description: 'This is a placeholder item that can be customized',
       cost: 0,
       image: advertisingImg,
@@ -119,7 +119,7 @@ export default function Index() {
     },
     {
       id: 'blank-item-2',
-      name: 'Free TokenTrek Marketplace Advertisement Slot',
+      name: 'Free POKIP Marketplace Advertisement Slot',
       description: 'This is a placeholder item that can be customized. just buy it',
       cost: 0,
       image: advertisingImg,
@@ -127,7 +127,7 @@ export default function Index() {
     },
     {
       id: 'blank-item-3',
-      name: 'Free TokenTrek Marketplace Advertisement Slot',
+      name: 'Free POKIP Marketplace Advertisement Slot',
       description: 'This is a placeholder item that can be customized by you. Just buy it',
       cost: 0,
       image: advertisingImg,
@@ -135,7 +135,7 @@ export default function Index() {
     },
     {
       id: 'blank-item-4',
-      name: 'Free TokenTrek Marketplace Advertisement Slot',
+      name: 'Free POKIP Marketplace Advertisement Slot',
       description: 'This is a placeholder item that can be customized',
       cost: 0,
       image: advertisingImg,
@@ -143,7 +143,7 @@ export default function Index() {
     },
     {
       id: 'blank-item-5',
-      name: 'Free TokenTrek Marketplace Advertisement Slot',
+      name: 'Free POKIP Marketplace Advertisement Slot',
       description: 'This is a placeholder item that can be customized',
       cost: 0,
       image: advertisingImg,
@@ -151,7 +151,7 @@ export default function Index() {
     },
     {
       id: 'blank-item-6',
-      name: 'Free TokenTrek Marketplace Advertisement Slot',
+      name: 'Free POKIP Marketplace Advertisement Slot',
       description: 'This is a placeholder item that can be customized',
       cost: 0,
       image: advertisingImg,
@@ -159,15 +159,15 @@ export default function Index() {
     },
     {
       id: 'blank-item-7',
-      name: 'Free TokenTrek Marketplace Advertisement Slot',
-      description: 'Free TokenTrek Marketplace Advertisement Slot',
+      name: 'Free POKIP Marketplace Advertisement Slot',
+      description: 'Free POKIP Marketplace Advertisement Slot',
       cost: 0,
       image: advertisingImg,
       category: 'Placeholder'
     },
     {
       id: 'blank-item-8',
-      name: 'Free TokenTrek Marketplace Advertisement Slot',
+      name: 'Free POKIP Marketplace Advertisement Slot',
       description: 'This is a placeholder item that can be customized',
       cost: 0,
       image: advertisingImg,
@@ -175,7 +175,7 @@ export default function Index() {
     },
     {
       id: 'blank-item-9',
-      name: 'Free TokenTrek Marketplace Advertisement Slot',
+      name: 'Free POKIP Marketplace Advertisement Slot',
       description: 'This is a placeholder item that can be customized',
       cost: 0,
       image: advertisingImg,
@@ -183,7 +183,7 @@ export default function Index() {
     },
     {
       id: 'blank-item-10',
-      name: 'Free TokenTrek Marketplace Advertisement Slot',
+      name: 'Free POKIP Marketplace Advertisement Slot',
       description: 'This is a placeholder item that can be customized',
       cost: 0,
       image: advertisingImg,
@@ -191,7 +191,7 @@ export default function Index() {
     },
     {
       id: 'blank-item-11',
-      name: 'Free TokenTrek Marketplace Advertisement Slot',
+      name: 'Free POKIP Marketplace Advertisement Slot',
       description: 'This is a placeholder item that can be customized',
       cost: 0,
       image: advertisingImg,
@@ -243,9 +243,9 @@ export default function Index() {
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-neon-cyan to-neon-purple bg-clip-text text-transparent">
-              TokenTrek Marketplace
+              POKIP Marketplace
             </h1>
-            <p className="text-muted-foreground mt-2">A THB Group brand.</p>
+            <p className="text-muted-foreground mt-2">A POKIP brand.</p>
             <p className="text-muted-foreground mt-2"></p>
           </div>
           
@@ -265,13 +265,13 @@ export default function Index() {
         {/* Main Content */}
         <Tabs defaultValue="marketplace" className="space-y-6">
           <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto">
-            <TabsTrigger value="marketplace">TokenTrek Mart - Student Items</TabsTrigger>
-            <TabsTrigger value="tasks">TokenTrek Hub</TabsTrigger>
+            <TabsTrigger value="marketplace">POKIP Mart - Student Items</TabsTrigger>
+            <TabsTrigger value="tasks">POKIP Hub</TabsTrigger>
           </TabsList>
           
           <TabsContent value="marketplace" className="space-y-6">
             <div className="text-center space-y-2">
-              <h2 className="text-2xl font-semibold">TokenTrek Student Items</h2>
+              <h2 className="text-2xl font-semibold">POKIP Student Items</h2>
               <p className="text-muted-foreground">Exchange your tokens for amazing rewards</p>
             </div>
             
@@ -299,10 +299,10 @@ export default function Index() {
               <div className="space-y-4 text-center">
                 <div className="flex items-center justify-center gap-2">
                   <Trophy className="w-5 h-5 text-neon-cyan" />
-                  <h2 className="text-xl font-bold">TokenTrek Hub</h2>
+                  <h2 className="text-xl font-bold">POKIP Hub</h2>
                 </div>
                 <p className="text-muted-foreground">
-                  TokenTrek Hub
+                  POKIP Hub
                 </p>
                 <Button
                   variant="gaming"
