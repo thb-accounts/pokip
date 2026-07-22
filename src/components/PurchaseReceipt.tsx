@@ -56,7 +56,7 @@ export const PurchaseReceipt = ({ item, purchaseCode, purchaseDate, onClose }: P
             <Badge variant="outline" className="border-neon-cyan text-neon-cyan text-lg px-4 py-2">
               ✓ Purchase Successful
             </Badge>
-            <h2 className="text-3xl font-bold text-neon-cyan">TokenTrek Receipt</h2>
+            <h2 className="text-3xl font-bold text-neon-cyan">POKIP Receipt</h2>
           </div>
 
           {/* Item Details */}
