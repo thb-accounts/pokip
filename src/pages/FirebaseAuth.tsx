@@ -1,271 +1,145 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useFirebaseAuth } from '@/hooks/useFirebaseAuth';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Label } from '@/components/ui/label';
-import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
-import { toast } from 'sonner';
-import { PokipLogo } from '@/components/brand/PokipLogo';
-import { Link } from 'react-router-dom';
-import type { ConfirmationResult } from 'firebase/auth';
-
-const FirebaseAuth = () => {
-  const { user, signIn, signUp, signInWithGoogle, signInWithPhone, setupRecaptcha } = useFirebaseAuth();
-  const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [otp, setOtp] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
-  const [showOtpInput, setShowOtpInput] = useState(false);
-
-  // Redirect to dashboard if user is already authenticated
-  useEffect(() => {
-    if (user) {
-      navigate('/dashboard');
-    }
-  }, [user, navigate]);
-
-  const handleSignIn = async (e: React.FormEvent) => {
+import { useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+} from "firebase/auth";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { auth, db } from "@/lib/firebase";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PokipLogo } from "@/components/brand/PokipLogo";
+import { toast } from "sonner";
+import type { UserRole } from "@/types/platform";
+const friendly = (e: unknown) =>
+  e instanceof Error
+    ? e.message.replace("Firebase: ", "").replace(/\([^)]*\)/, "")
+    : "Unable to continue. Please try again.";
+export default function FirebaseAuth() {
+  const [params] = useSearchParams(),
+    nav = useNavigate(),
+    [signup, setSignup] = useState(params.get("mode") === "signup"),
+    [email, setEmail] = useState(""),
+    [password, setPassword] = useState(""),
+    [role, setRole] = useState<UserRole>("customer"),
+    [busy, setBusy] = useState(false);
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
+    setBusy(true);
     try {
-      await signIn(email, password);
-      toast.success('Signed in successfully!');
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to sign in');
+      if (signup) {
+        const c = await createUserWithEmailAndPassword(auth, email, password);
+        await setDoc(doc(db, "users", c.user.uid), {
+          uid: c.user.uid,
+          email: c.user.email || email,
+          displayName: "",
+          role,
+          status: "active",
+          onboardingCompleted: false,
+          membershipCode: `PK-${c.user.uid.slice(0, 8).toUpperCase()}`,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
+        sendEmailVerification(c.user).catch(() => undefined);
+        nav(
+          role === "merchant" ? "/onboarding/merchant" : "/onboarding/customer",
+        );
+      } else {
+        await signInWithEmailAndPassword(auth, email, password);
+        nav("/dashboard");
+      }
+    } catch (e) {
+      toast.error(friendly(e));
     } finally {
-      setLoading(false);
+      setBusy(false);
     }
-  };
-
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  }
+  async function reset() {
+    if (!email) return toast.error("Enter your email address first.");
     try {
-      await signUp(email, password);
-      toast.success('Account created successfully!');
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to create account');
-    } finally {
-      setLoading(false);
+      await sendPasswordResetEmail(auth, email);
+      toast.success("Password reset email sent.");
+    } catch (e) {
+      toast.error(friendly(e));
     }
-  };
-
-  const handleGoogleSignIn = async () => {
-    setLoading(true);
-    try {
-      await signInWithGoogle();
-      toast.success('Signed in with Google!');
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to sign in with Google');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handlePhoneSignIn = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const recaptchaVerifier = setupRecaptcha('recaptcha-container');
-      const confirmation = await signInWithPhone(phoneNumber, recaptchaVerifier);
-      setConfirmationResult(confirmation);
-      setShowOtpInput(true);
-      toast.success('OTP sent to your phone!');
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to send OTP');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleOtpVerification = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!confirmationResult || !otp) return;
-    
-    setLoading(true);
-    try {
-      await confirmationResult.confirm(otp);
-      toast.success('Phone verified successfully!');
-    } catch (error: any) {
-      toast.error(error.message || 'Invalid OTP');
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  }
   return (
-    <div className="min-h-screen bg-gradient-hero flex flex-col items-center justify-center p-4">
-      <Link to="/" className="mb-6 flex items-center gap-2" aria-label="POKIP home">
-        <PokipLogo variant="mark" className="h-10 w-10 rounded-xl" />
-        <PokipLogo className="h-7 w-auto" />
-      </Link>
+    <main className="min-h-screen bg-gradient-hero grid place-items-center p-4">
       <Card className="w-full max-w-md shadow-card">
-        <CardHeader>
-          <CardTitle className="text-center text-2xl">Welcome to POKIP</CardTitle>
-          <p className="text-center text-sm text-muted-foreground">
-            Sign in or create your POKIP account to continue.
-          </p>
+        <CardHeader className="items-center">
+          <Link to="/">
+            <PokipLogo className="h-8 w-auto" />
+          </Link>
+          <CardTitle>
+            {signup ? "Create your POKIP account" : "Welcome back"}
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
-              <TabsTrigger value="phone">Phone</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="signin">
-              <form onSubmit={handleSignIn} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? 'Signing In...' : 'Sign In'}
-                </Button>
-              </form>
-            </TabsContent>
-            
-            <TabsContent value="signup">
-              <form onSubmit={handleSignUp} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
-                  <Input
-                    id="signup-email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
-                  <Input
-                    id="signup-password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? 'Creating Account...' : 'Sign Up'}
-                </Button>
-              </form>
-            </TabsContent>
-            
-            <TabsContent value="phone">
-              {!showOtpInput ? (
-                <form onSubmit={handlePhoneSignIn} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      placeholder="+1234567890"
-                      value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? 'Sending OTP...' : 'Send OTP'}
-                  </Button>
-                  <div id="recaptcha-container"></div>
-                </form>
-              ) : (
-                <form onSubmit={handleOtpVerification} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Enter OTP sent to {phoneNumber}</Label>
-                    <div className="flex justify-center">
-                      <InputOTP
-                        value={otp}
-                        onChange={setOtp}
-                        maxLength={6}
-                      >
-                        <InputOTPGroup>
-                          <InputOTPSlot index={0} />
-                          <InputOTPSlot index={1} />
-                          <InputOTPSlot index={2} />
-                          <InputOTPSlot index={3} />
-                          <InputOTPSlot index={4} />
-                          <InputOTPSlot index={5} />
-                        </InputOTPGroup>
-                      </InputOTP>
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      className="flex-1"
-                      onClick={() => {
-                        setShowOtpInput(false);
-                        setOtp('');
-                        setConfirmationResult(null);
-                      }}
+          <form onSubmit={submit} className="space-y-4">
+            {signup && (
+              <fieldset>
+                <Label>Account type</Label>
+                <div className="mt-2 grid grid-cols-2 gap-2">
+                  {(["customer", "merchant"] as UserRole[]).map((r) => (
+                    <Button
+                      type="button"
+                      key={r}
+                      variant={role === r ? "default" : "outline"}
+                      onClick={() => setRole(r)}
+                      className="capitalize"
                     >
-                      Back
+                      {r}
                     </Button>
-                    <Button 
-                      type="submit" 
-                      className="flex-1" 
-                      disabled={loading || otp.length !== 6}
-                    >
-                      {loading ? 'Verifying...' : 'Verify'}
-                    </Button>
-                  </div>
-                </form>
-              )}
-            </TabsContent>
-          </Tabs>
-          
-          <div className="mt-4">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
-                  Or continue with
-                </span>
-              </div>
+                  ))}
+                </div>
+              </fieldset>
+            )}
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </div>
-            <Button
-              variant="outline"
-              className="w-full mt-4"
-              onClick={handleGoogleSignIn}
-              disabled={loading}
-            >
-              Continue with Google
+            <div>
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                minLength={6}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            <Button className="w-full" disabled={busy}>
+              {busy ? "Please wait…" : signup ? "Create account" : "Sign in"}
             </Button>
+          </form>
+          <div className="mt-4 flex justify-between text-sm">
+            <button
+              onClick={() => setSignup(!signup)}
+              className="text-pokip-blue-deep"
+            >
+              {signup
+                ? "Already have an account? Sign in"
+                : "Need an account? Sign up"}
+            </button>
+            {!signup && (
+              <button onClick={reset} className="text-pokip-blue-deep">
+                Forgot password?
+              </button>
+            )}
           </div>
         </CardContent>
       </Card>
-    </div>
+    </main>
   );
-};
-
-export default FirebaseAuth;
+}
