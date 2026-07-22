@@ -59,6 +59,12 @@ export default {
 				'pokip-silver': 'hsl(var(--pokip-silver))',
 				'pokip-silver-light': 'hsl(var(--pokip-silver-light))',
 				'pokip-ink': 'hsl(var(--pokip-ink))',
+				// Legacy aliases
+				'neon-cyan': 'hsl(var(--pokip-blue))',
+				'neon-purple': 'hsl(var(--pokip-blue-deep))',
+				'electric-blue': 'hsl(var(--pokip-blue))',
+				'dark-surface': 'hsl(var(--card))',
+				'darker-surface': 'hsl(var(--background))',
 				success: {
 					DEFAULT: 'hsl(var(--success))',
 					foreground: 'hsl(var(--success-foreground))'
@@ -128,7 +134,10 @@ export default {
 				'gradient-brand': 'var(--gradient-brand)',
 				'gradient-silver': 'var(--gradient-silver)',
 				'gradient-hero': 'var(--gradient-hero)',
-				'gradient-card': 'var(--gradient-card)'
+				'gradient-card': 'var(--gradient-card)',
+				'gradient-gaming': 'var(--gradient-brand)',
+				'gradient-button': 'var(--gradient-brand)',
+				'gradient-dark': 'var(--gradient-hero)'
 			},
 			boxShadow: {
 				'brand': 'var(--shadow-brand)',
