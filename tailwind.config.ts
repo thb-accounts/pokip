@@ -52,12 +52,21 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				// Gaming color palette
-				'neon-cyan': 'hsl(var(--neon-cyan))',
-				'neon-purple': 'hsl(var(--neon-purple))',
-				'electric-blue': 'hsl(var(--electric-blue))',
-				'dark-surface': 'hsl(var(--dark-surface))',
-				'darker-surface': 'hsl(var(--darker-surface))',
+				// POKIP brand palette
+				'pokip-blue': 'hsl(var(--pokip-blue))',
+				'pokip-blue-deep': 'hsl(var(--pokip-blue-deep))',
+				'pokip-blue-soft': 'hsl(var(--pokip-blue-soft))',
+				'pokip-silver': 'hsl(var(--pokip-silver))',
+				'pokip-silver-light': 'hsl(var(--pokip-silver-light))',
+				'pokip-ink': 'hsl(var(--pokip-ink))',
+				success: {
+					DEFAULT: 'hsl(var(--success))',
+					foreground: 'hsl(var(--success-foreground))'
+				},
+				warning: {
+					DEFAULT: 'hsl(var(--warning))',
+					foreground: 'hsl(var(--warning-foreground))'
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
@@ -116,14 +125,18 @@ export default {
 				'float': 'float 3s ease-in-out infinite'
 			},
 			backgroundImage: {
-				'gradient-gaming': 'var(--gradient-gaming)',
-				'gradient-card': 'var(--gradient-card)',
-				'gradient-button': 'var(--gradient-button)'
+				'gradient-brand': 'var(--gradient-brand)',
+				'gradient-silver': 'var(--gradient-silver)',
+				'gradient-hero': 'var(--gradient-hero)',
+				'gradient-card': 'var(--gradient-card)'
 			},
 			boxShadow: {
-				'neon': 'var(--shadow-neon)',
-				'glow': 'var(--shadow-glow)',
-				'card': 'var(--shadow-card)'
+				'brand': 'var(--shadow-brand)',
+				'card': 'var(--shadow-card)',
+				'glow': 'var(--shadow-glow)'
+			},
+			fontFamily: {
+				sans: ['Plus Jakarta Sans', 'ui-sans-serif', 'system-ui', 'sans-serif']
 			}
 		}
 	},
