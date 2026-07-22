@@ -1,0 +1,1 @@
+// Firebase is used instead of Supabase for this project
