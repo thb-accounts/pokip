@@ -1,0 +1,42 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signed() { return request.auth != null; }
+    function admin() {
+      return signed() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    function active() {
+      return signed() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.status == 'active';
+    }
+    function owner(id) {
+      return active() && get(/databases/$(database)/documents/merchants/$(id)).data.ownerUid == request.auth.uid;
+    }
+
+    match /users/{uid} {
+      allow read: if signed() && (request.auth.uid == uid || admin());
+      allow create: if signed() && request.auth.uid == uid && request.resource.data.role in ['customer', 'merchant'] && request.resource.data.status == 'active';
+      allow update: if (request.auth.uid == uid && request.resource.data.role == resource.data.role && request.resource.data.status == resource.data.status) || admin();
+      allow delete: if false;
+      match /notifications/{id} { allow read: if request.auth.uid == uid; allow write: if false; }
+    }
+    match /merchants/{id} {
+      allow read: if resource.data.status == 'active' || owner(id) || admin();
+      allow create: if active() && request.resource.data.ownerUid == request.auth.uid;
+      allow update: if owner(id) || admin();
+      allow delete: if false;
+      match /customers/{uid} { allow read: if owner(id) || admin() || request.auth.uid == uid; allow write: if false; }
+    }
+    match /listings/{id} {
+      allow read: if resource.data.status == 'published' || owner(resource.data.merchantId) || admin();
+      allow create, update: if owner(request.resource.data.merchantId) || admin();
+      allow delete: if owner(resource.data.merchantId) || admin();
+    }
+    match /pointsBalances/{id} { allow read: if signed() && (request.auth.uid == resource.data.customerUid || owner(resource.data.merchantId) || admin()); allow write: if false; }
+    match /pointsTransactions/{id} { allow read: if signed() && (request.auth.uid == resource.data.customerUid || owner(resource.data.merchantId) || admin()); allow write: if false; }
+    match /redemptions/{id} { allow read: if signed() && (request.auth.uid == resource.data.customerUid || owner(resource.data.merchantId) || admin()); allow write: if false; }
+    match /categories/{id} { allow read: if true; allow write: if admin(); }
+    match /auditLogs/{id} { allow read: if admin(); allow write: if false; }
+    match /platformSettings/{id} { allow read: if admin(); allow write: if false; }
+  }
+}
