@@ -1,331 +1,97 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card } from "@/components/ui/card";
-import { ItemCard, Item } from '@/components/ItemCard';
-
+import { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { TokenCounter } from '@/components/TokenCounter';
-import { PurchaseReceipt } from '@/components/PurchaseReceipt';
+import { PublicNav } from '@/components/nav/PublicNav';
+import { PublicFooter } from '@/components/nav/PublicFooter';
 import { useFirebaseAuth } from '@/hooks/useFirebaseAuth';
 import { useProfile } from '@/hooks/useProfile';
-
-import { useStock } from '@/hooks/useStock';
-import { usePurchase } from '@/hooks/usePurchase';
-import { useToast } from "@/hooks/use-toast";
-import { LogOut, Trophy } from 'lucide-react';
-
-// Import images: Use format import (whatever) and then from '@/assets/imagefile.png';
-import gamingChairImg from '@/assets/gaming-chair.jpg';
-import gamingHeadsetImg from '@/assets/gaming-headset.jpg';
-import gamingKeyboardImg from '@/assets/gaming-keyboard.jpg';
-import gamingMouseImg from '@/assets/gaming-mouse.jpg';
-import robuxCurrencyImg from '@/assets/robux-currency.jpg';
-import bellCafeCookieImg from '@/assets/bell-cafe-cookie.jpg';
-import advertisingImg from '@/assets/BIG.png'
-import jassimsImg from '@/assets/jassimitem.png'
+import { useCustomerPurchases } from '@/hooks/useCustomerPurchases';
+import { FullscreenLoader } from '@/components/guards/RequireAuth';
+import { toast } from 'sonner';
+import { Copy, ShoppingBag } from 'lucide-react';
 
 export default function Index() {
   const navigate = useNavigate();
   const { user, loading: authLoading, logout } = useFirebaseAuth();
-  const { profile, loading: profileLoading, updateTokens } = useProfile();
-  
-  const { stockData, userPurchases, loading: stockLoading, getStockForItem, hasUserPurchased, refetch: refetchStock } = useStock(user?.uid);
-  const { purchaseItem } = usePurchase();
-  const { toast } = useToast();
-  
-  const [receiptData, setReceiptData] = useState<{
-    item: Item;
-    purchaseCode: string;
-    purchaseDate: Date;
-  } | null>(null);
+  const { profile, loading: profileLoading } = useProfile();
+  const { purchases, loading: purchasesLoading } = useCustomerPurchases(user?.uid);
 
-  if (authLoading || profileLoading || stockLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-dark flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-neon-cyan mx-auto"></div>
-          <p className="text-muted-foreground">Loading POKIP...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    navigate('/auth');
-    return null;
-  }
-
-  if (!user || !profile) {
-    return null;
-  }
-
-  const items: Item[] = [
-    {
-      id: 'blank-item-18',
-      name: 'POKIP Slot',
-      description: 'This slot can be yours',
-      cost: 2,
-      image: advertisingImg,
-      category: 'Advertisement'
-    },
-    {
-      id: 'blank-item-17',
-      name: 'App or Website Development',
-      description: 'Just buy this slot on POKIP, Hammad will contact you.',
-      cost: 100,
-      image: advertisingImg,
-      category: 'Classroom Essentials'
-    },
-    {
-      id: 'blank-item-16',
-      name: 'Just buy this slot on POKIP, Hammad will contact you.',
-      description: 'Just buy this slot on POKIP, Hammad will contact you.',
-      cost: 0,
-      image: advertisingImg,
-      category: 'Classroom Essentials'
-    },
-    {
-      id: 'blank-item-15',
-      name: 'Just buy this slot on POKIP, Hammad will contact you.',
-      description: 'Just buy this slot on POKIP, Hammad will contact you.',
-      cost: 100,
-      image: advertisingImg,
-      category: ' Gaming Console'
-    },
-    {
-      id: 'blank-item-14',
-      name: 'Just buy this slot on POKIP, Hammad will contact you.',
-      description: 'Just buy this slot on POKIP, Hammad will contact you.',
-      cost: 0,
-      image: advertisingImg,
-      category: 'In-Game Currency'
-    },
-    {
-      id: 'blank-item-13',
-      name: 'Just buy this slot on POKIP, Hammad will contact you.',
-      description: 'Just buy this slot on POKIP, Hammad will contact you.',
-      cost: 0,
-      image: advertisingImg,
-      category: 'Food'
-    },
-    {
-      id: 'blank-item-1',
-      name: 'Free POKIP Marketplace Advertisement Slot',
-      description: 'This is a placeholder item that can be customized',
-      cost: 0,
-      image: advertisingImg,
-      category: 'Placeholder'
-    },
-    {
-      id: 'blank-item-2',
-      name: 'Free POKIP Marketplace Advertisement Slot',
-      description: 'This is a placeholder item that can be customized. just buy it',
-      cost: 0,
-      image: advertisingImg,
-      category: 'Placeholder'
-    },
-    {
-      id: 'blank-item-3',
-      name: 'Free POKIP Marketplace Advertisement Slot',
-      description: 'This is a placeholder item that can be customized by you. Just buy it',
-      cost: 0,
-      image: advertisingImg,
-      category: 'Placeholder'
-    },
-    {
-      id: 'blank-item-4',
-      name: 'Free POKIP Marketplace Advertisement Slot',
-      description: 'This is a placeholder item that can be customized',
-      cost: 0,
-      image: advertisingImg,
-      category: 'Placeholder'
-    },
-    {
-      id: 'blank-item-5',
-      name: 'Free POKIP Marketplace Advertisement Slot',
-      description: 'This is a placeholder item that can be customized',
-      cost: 0,
-      image: advertisingImg,
-      category: 'Placeholder'
-    },
-    {
-      id: 'blank-item-6',
-      name: 'Free POKIP Marketplace Advertisement Slot',
-      description: 'This is a placeholder item that can be customized',
-      cost: 0,
-      image: advertisingImg,
-      category: 'Placeholder'
-    },
-    {
-      id: 'blank-item-7',
-      name: 'Free POKIP Marketplace Advertisement Slot',
-      description: 'Free POKIP Marketplace Advertisement Slot',
-      cost: 0,
-      image: advertisingImg,
-      category: 'Placeholder'
-    },
-    {
-      id: 'blank-item-8',
-      name: 'Free POKIP Marketplace Advertisement Slot',
-      description: 'This is a placeholder item that can be customized',
-      cost: 0,
-      image: advertisingImg,
-      category: 'Placeholder'
-    },
-    {
-      id: 'blank-item-9',
-      name: 'Free POKIP Marketplace Advertisement Slot',
-      description: 'This is a placeholder item that can be customized',
-      cost: 0,
-      image: advertisingImg,
-      category: 'Placeholder'
-    },
-    {
-      id: 'blank-item-10',
-      name: 'Free POKIP Marketplace Advertisement Slot',
-      description: 'This is a placeholder item that can be customized',
-      cost: 0,
-      image: advertisingImg,
-      category: 'Placeholder'
-    },
-    {
-      id: 'blank-item-11',
-      name: 'Free POKIP Marketplace Advertisement Slot',
-      description: 'This is a placeholder item that can be customized',
-      cost: 0,
-      image: advertisingImg,
-      category: 'Placeholder'
-    },
-    {
-      id: 'blank-item-12',
-      name: 'VIP Slot',
-      description: 'Get a VIP SLOT for your item. In school advertising.',
-      cost: 60,
-      image: advertisingImg,
-      category: 'Placeholder'
+  useEffect(() => {
+    if (!authLoading && profile && profile.role === 'merchant') {
+      navigate('/merchant/dashboard', { replace: true });
     }
-  ];
+  }, [authLoading, profile, navigate]);
 
-  const handlePurchase = async (item: Item) => {
-    if (!profile || !user) return;
+  if (authLoading || profileLoading) return <FullscreenLoader />;
+  if (!user || !profile) return null;
 
-    try {
-      const result = await purchaseItem(item, user?.uid, profile.tokens);
-      
-      await updateTokens(result.newTokenAmount);
-      await refetchStock();
-
-      setReceiptData({
-        item,
-        purchaseCode: result.purchaseCode,
-        purchaseDate: new Date()
-      });
-
-      toast({
-        title: "Purchase Successful!",
-        description: `You've successfully purchased ${item.name}`,
-      });
-    } catch (error) {
-      toast({
-        title: "Purchase Failed",
-        description: error instanceof Error ? error.message : "There was an error processing your purchase.",
-        variant: "destructive",
-      });
-    }
+  const copyMemberId = () => {
+    if (!profile.member_id) return;
+    navigator.clipboard.writeText(profile.member_id);
+    toast.success('Member ID copied');
   };
 
-
   return (
-    <div className="min-h-screen bg-gradient-dark">
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+    <div className="min-h-screen flex flex-col bg-background">
+      <PublicNav />
+      <main className="flex-1 container mx-auto px-4 py-8 space-y-6">
+        <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-brand bg-clip-text text-transparent">
-              POKIP Marketplace
-            </h1>
-            <p className="text-muted-foreground mt-2">Your POKIP membership dashboard.</p>
+            <h1 className="text-3xl font-bold">Welcome back{profile.display_name ? `, ${profile.display_name}` : ''}</h1>
+            <p className="text-muted-foreground">Your POKIP membership at a glance.</p>
           </div>
-          
-          <div className="flex items-center gap-4">
-            <TokenCounter tokens={profile?.tokens || 0} />
-            <Button 
-              variant="outline" 
-              onClick={logout}
-              className="gap-2"
-            >
-              <LogOut className="w-4 h-4" />
-              Sign Out
-            </Button>
+          <div className="flex items-center gap-3">
+            <TokenCounter tokens={profile.tokens || 0} />
+            <Button variant="outline" onClick={async () => { await logout(); navigate('/'); }}>Sign out</Button>
           </div>
         </div>
 
-        {/* Main Content */}
-        <Tabs defaultValue="marketplace" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto">
-            <TabsTrigger value="marketplace">POKIP Mart - Student Items</TabsTrigger>
-            <TabsTrigger value="tasks">POKIP Hub</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="marketplace" className="space-y-6">
-            <div className="text-center space-y-2">
-              <h2 className="text-2xl font-semibold">POKIP Student Items</h2>
-              <p className="text-muted-foreground">Exchange your tokens for amazing rewards</p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {items.map((item) => {
-                const stockInfo = getStockForItem(item.id);
-                const userPurchased = hasUserPurchased(item.id);
-                
-                return (
-                  <ItemCard
-                    key={item.id}
-                    item={item}
-                    userTokens={profile?.tokens || 0}
-                    remainingStock={stockInfo?.remaining_stock || 0}
-                    hasUserPurchased={userPurchased}
-                    onPurchase={handlePurchase}
-                  />
-                );
-              })}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="tasks" className="mt-6">
-            <Card className="bg-gradient-card border-border/20 shadow-card p-6">
-              <div className="space-y-4 text-center">
-                <div className="flex items-center justify-center gap-2">
-                  <Trophy className="w-5 h-5 text-neon-cyan" />
-                  <h2 className="text-xl font-bold">POKIP Hub</h2>
-                </div>
-                <p className="text-muted-foreground">
-                  POKIP Hub
-                </p>
-                <Button
-                  variant="gaming"
-                  size="lg"
-                  onClick={() => window.open('https://fbjemr.mimo.run/tasks.html', '_blank')}
-                  className="w-full"
-                >
-                  Go to Tasks
+        <div className="grid gap-4 md:grid-cols-2">
+          <Card>
+            <CardHeader><CardTitle className="text-base">Your Member ID</CardTitle></CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-3">
+                <code className="text-xl font-mono font-semibold text-pokip-blue">{profile.member_id || '—'}</code>
+                <Button size="sm" variant="outline" onClick={copyMemberId} disabled={!profile.member_id}>
+                  <Copy className="w-4 h-4 mr-1" />Copy
                 </Button>
               </div>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
+              <p className="text-xs text-muted-foreground mt-2">Share this ID with POKIP merchants so they can award you points.</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader><CardTitle className="text-base">Ready to redeem?</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-sm text-muted-foreground">Browse rewards from every POKIP merchant.</p>
+              <Button asChild><Link to="/shop"><ShoppingBag className="w-4 h-4 mr-1" />Open POKIP Shop</Link></Button>
+            </CardContent>
+          </Card>
+        </div>
 
-      {/* Purchase Receipt Modal */}
-      {receiptData && (
-        <PurchaseReceipt
-          item={receiptData.item}
-          purchaseCode={receiptData.purchaseCode}
-          purchaseDate={receiptData.purchaseDate}
-          onClose={() => setReceiptData(null)}
-        />
-      )}
+        <Card>
+          <CardHeader><CardTitle className="text-base">Your purchases</CardTitle></CardHeader>
+          <CardContent className="space-y-2">
+            {purchasesLoading && <div className="text-sm text-muted-foreground">Loading…</div>}
+            {!purchasesLoading && purchases.length === 0 && (
+              <div className="text-sm text-muted-foreground italic">You haven't redeemed anything yet.</div>
+            )}
+            {purchases.map(p => (
+              <div key={p.id} className="flex items-center justify-between border-b last:border-0 py-2 text-sm gap-3">
+                <div className="min-w-0">
+                  <div className="font-medium truncate">{p.item_title}</div>
+                  <div className="text-xs text-muted-foreground truncate">{p.merchant_name} · {new Date(p.purchased_at).toLocaleString()}</div>
+                  <div className="text-xs text-muted-foreground truncate font-mono">{p.purchase_code}</div>
+                </div>
+                <Badge variant={p.redeemed ? 'secondary' : 'default'}>{p.redeemed ? 'Redeemed' : 'Ready'}</Badge>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </main>
+      <PublicFooter />
     </div>
   );
 }
