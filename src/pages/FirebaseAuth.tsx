@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useFirebaseAuth } from '@/hooks/useFirebaseAuth';
+import { useProfile } from '@/hooks/useProfile';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,7 +15,11 @@ import type { ConfirmationResult } from 'firebase/auth';
 
 const FirebaseAuth = () => {
   const { user, signIn, signUp, signInWithGoogle, signInWithPhone, setupRecaptcha } = useFirebaseAuth();
+  const { ensureProfile } = useProfile();
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const requestedRole = params.get('role') === 'merchant' ? 'merchant' : 'customer';
+  const nextParam = params.get('next');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -23,12 +28,22 @@ const FirebaseAuth = () => {
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
   const [showOtpInput, setShowOtpInput] = useState(false);
 
-  // Redirect to dashboard if user is already authenticated
+  // Redirect to the right home after auth resolves
   useEffect(() => {
-    if (user) {
-      navigate('/dashboard');
-    }
-  }, [user, navigate]);
+    let cancelled = false;
+    (async () => {
+      if (!user) return;
+      const profile = await ensureProfile({ role: requestedRole });
+      if (cancelled) return;
+      if (nextParam) { navigate(nextParam, { replace: true }); return; }
+      if (profile?.role === 'merchant') {
+        navigate('/merchant/dashboard', { replace: true });
+      } else {
+        navigate('/dashboard', { replace: true });
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [user, requestedRole, nextParam, ensureProfile, navigate]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,9 +122,13 @@ const FirebaseAuth = () => {
       </Link>
       <Card className="w-full max-w-md shadow-card">
         <CardHeader>
-          <CardTitle className="text-center text-2xl">Welcome to POKIP</CardTitle>
+          <CardTitle className="text-center text-2xl">
+            {requestedRole === 'merchant' ? 'Join POKIP as a merchant' : 'Welcome to POKIP'}
+          </CardTitle>
           <p className="text-center text-sm text-muted-foreground">
-            Sign in or create your POKIP account to continue.
+            {requestedRole === 'merchant'
+              ? 'Create your merchant account to list rewards and award points to POKIP members.'
+              : 'Sign in or create your POKIP account to continue.'}
           </p>
         </CardHeader>
         <CardContent>
