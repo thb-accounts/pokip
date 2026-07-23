@@ -12,12 +12,15 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">404</h1>
-        <p className="text-xl text-gray-600 mb-4">Bruh. Why are you in the desert now? Go back home. You don't need to go here bruv, there is absolutely nothing here...</p>
-        <a href="/" className="text-blue-500 hover:text-blue-700 underline">
-          Return to Home. Now.
+    <div className="flex min-h-screen items-center justify-center bg-gradient-hero px-4">
+      <div className="max-w-lg text-center">
+        <p className="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-pokip-blue">POKIP</p>
+        <h1 className="mb-4 text-5xl font-bold text-pokip-ink">404</h1>
+        <p className="mb-6 text-lg text-muted-foreground">
+          We couldn't find that page. Head back home to keep earning and redeeming your points.
+        </p>
+        <a href="/" className="font-semibold text-pokip-blue underline underline-offset-4 hover:text-pokip-blue-deep">
+          Return to POKIP home
         </a>
       </div>
     </div>

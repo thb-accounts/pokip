@@ -108,10 +108,10 @@ export default {
 				},
 				'glow-pulse': {
 					'0%, 100%': {
-						boxShadow: '0 0 20px hsl(194 100% 50% / 0.3)'
+						boxShadow: '0 0 20px hsl(222 100% 50% / 0.3)'
 					},
 					'50%': {
-						boxShadow: '0 0 30px hsl(194 100% 50% / 0.6)'
+						boxShadow: '0 0 30px hsl(222 100% 50% / 0.6)'
 					}
 				},
 				'token-bounce': {
