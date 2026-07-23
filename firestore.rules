@@ -1,0 +1,110 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{db}/documents {
+    function isSignedIn() { return request.auth != null; }
+    function isSelf(uid) { return isSignedIn() && request.auth.uid == uid; }
+    function myProfile() { return get(/databases/$(db)/documents/profiles/$(request.auth.uid)).data; }
+    function myRole() { return myProfile().role; }
+    function isCustomer() { return isSignedIn() && myRole() == 'customer'; }
+    function isMerchant() { return isSignedIn() && myRole() == 'merchant'; }
+    function isAdmin() { return isSignedIn() && myRole() == 'admin'; }
+
+    match /profiles/{uid} {
+      allow read: if isSelf(uid) || isAdmin() || isMerchant();
+      allow create: if isSelf(uid)
+        && request.resource.data.user_id == uid
+        && request.resource.data.role in ['customer', 'merchant'];
+      allow update: if isSelf(uid)
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.member_id == resource.data.member_id
+        && request.resource.data.user_id == resource.data.user_id;
+      // Merchants can only update tokens via server-side award flow (client-side transaction in dev).
+      allow update: if isMerchant()
+        && resource.data.role == 'customer'
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.member_id == resource.data.member_id
+        && request.resource.data.user_id == resource.data.user_id
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['tokens', 'updated_at']);
+      allow delete: if false;
+    }
+
+    match /member_ids/{key} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    match /merchant_slugs/{slug} {
+      allow read: if true;
+      allow create, update: if isMerchant() && request.resource.data.owner_uid == request.auth.uid;
+      allow delete: if isMerchant() && resource.data.owner_uid == request.auth.uid;
+    }
+
+    match /merchant_profiles/{merchantId} {
+      allow read: if true;
+      allow create: if isMerchant()
+        && merchantId == request.auth.uid
+        && request.resource.data.owner_uid == request.auth.uid;
+      allow update: if isMerchant()
+        && resource.data.owner_uid == request.auth.uid
+        && request.resource.data.owner_uid == resource.data.owner_uid;
+      allow delete: if false;
+    }
+
+    match /merchant_items/{itemId} {
+      allow read: if resource.data.status == 'published'
+        || (isSignedIn() && resource.data.merchant_owner_uid == request.auth.uid)
+        || isAdmin();
+      allow create: if isMerchant()
+        && request.resource.data.merchant_owner_uid == request.auth.uid
+        && request.resource.data.merchant_id == request.auth.uid;
+      allow update: if isMerchant()
+        && resource.data.merchant_owner_uid == request.auth.uid
+        && request.resource.data.merchant_owner_uid == resource.data.merchant_owner_uid
+        && request.resource.data.merchant_id == resource.data.merchant_id;
+      // Stock decrement during a customer purchase transaction:
+      allow update: if isCustomer()
+        && resource.data.status == 'published'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['stock_quantity', 'updated_at'])
+        && request.resource.data.stock_quantity == resource.data.stock_quantity - 1;
+      allow delete: if isMerchant() && resource.data.merchant_owner_uid == request.auth.uid;
+    }
+
+    match /shop_purchases/{purchaseId} {
+      allow read: if isSignedIn()
+        && (resource.data.user_id == request.auth.uid
+            || resource.data.merchant_owner_uid == request.auth.uid
+            || isAdmin());
+      allow create: if isCustomer()
+        && request.resource.data.user_id == request.auth.uid
+        && request.resource.data.redeemed == false;
+      allow update: if isMerchant()
+        && resource.data.merchant_owner_uid == request.auth.uid
+        && resource.data.redeemed == false
+        && request.resource.data.redeemed == true
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['redeemed', 'redeemed_at', 'redeemed_by_uid', 'redeemed_by_merchant_id']);
+      allow delete: if false;
+    }
+
+    match /point_awards/{awardId} {
+      allow read: if isSignedIn()
+        && (resource.data.merchant_owner_uid == request.auth.uid
+            || resource.data.customer_uid == request.auth.uid
+            || isAdmin());
+      allow create: if isMerchant()
+        && request.resource.data.merchant_owner_uid == request.auth.uid
+        && request.resource.data.points is number
+        && request.resource.data.points > 0;
+      allow update, delete: if false;
+    }
+
+    // Legacy collections kept read/write for the account owner
+    match /user_purchases/{id} {
+      allow read, write: if isSignedIn();
+    }
+    match /item_stock/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /tasks/{id} { allow read: if isSignedIn(); allow write: if isAdmin(); }
+    match /user_task_completions/{id} { allow read, write: if isSignedIn(); }
+  }
+}
